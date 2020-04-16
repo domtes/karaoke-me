@@ -79,16 +79,15 @@ class SeparatorWorker(core.Stack):
                  **kwargs):
         super().__init__(scope, id, **kwargs)
 
-        worker_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), 'worker-placeholder'))
+        worker_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), 'worker'))
 
         self.service = ecs_patterns.QueueProcessingFargateService(self, 'separator-service',
             cluster=cluster,
-            cpu=256,
-            memory_limit_mib=512,
+            cpu=2048,
+            memory_limit_mib=8192,
             image=ecs.ContainerImage.from_asset(directory=worker_dir),
             environment={
                 'TRACKS_TABLE_NAME': tracks_table.table_name,
-                'INPUT_BUCKET_NAME': input_bucket.bucket_name,
                 'OUTPUT_BUCKET_NAME': output_bucket.bucket_name
             })
 
