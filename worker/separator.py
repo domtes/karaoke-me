@@ -21,6 +21,7 @@ OUTPUT_FILENAME_FORMAT = os.getenv('OUTPUT_FILENAME_FORMAT', '{instrument}.{code
 QUEUE_NAME = os.getenv('QUEUE_NAME')
 POLLING_INTERVAL = int(os.getenv('POLLING_INTERVAL', 5))
 OUTPUT_BUCKET_NAME = os.getenv('OUTPUT_BUCKET_NAME')
+OUTPUT_BUCKET_REGION= os.getenv('OUTPUT_BUCKET_REGION', 'eu-west-1')
 TRACKS_TABLE_NAME = os.getenv('TRACKS_TABLE_NAME')
 USE_MULTICHANNEL_WIENER_FILTERING = False
 
@@ -79,6 +80,7 @@ def poll_for_sqs_message(queue_name: str):
         body = json.loads(message['Body'])
         job_id = body['job_id']
         output_s3_url = f"s3://{OUTPUT_BUCKET_NAME}/track_{job_id}.mp3"
+        download_url = f'https://{OUTPUT_BUCKET_NAME}.s3-{OUTPUT_BUCKET_REGION}.amazonaws.com/track_{job_id}.mp3'
         logging.info(f'Start separating {job_id} -> {output_s3_url}')
 
         try:
@@ -94,7 +96,7 @@ def poll_for_sqs_message(queue_name: str):
                 Key={'id': {'S': job_id}},
                 AttributeUpdates={
                     'status': {'Value': {'S': 'successful'}},
-                    'output_url': {'Value': {'S': output_s3_url}}
+                    'output_url': {'Value': {'S': download_url}}
                 })
         except:
             logging.exception('Processing failed for some reason')
