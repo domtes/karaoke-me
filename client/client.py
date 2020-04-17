@@ -22,7 +22,7 @@ def api_req(ctx: click.core.Context, method: str, url: str, **kwargs):
     actual_url = ctx.obj['url'](url)
 
     if ctx.obj['verbose']:
-        print(f'GET {actual_url}')
+        print(f'{method.upper()} {actual_url}')
 
     response = getattr(requests, method)(actual_url, **kwargs)
 
