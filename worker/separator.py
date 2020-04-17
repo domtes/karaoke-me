@@ -19,7 +19,7 @@ MAX_AUDIO_DURATION = float(os.getenv('MAX_AUDIO_DURATION', 600.))
 AUDIO_START_OFFSET = float(os.getenv('AUDIO_START_OFFSET', 0.))
 OUTPUT_FILENAME_FORMAT = os.getenv('OUTPUT_FILENAME_FORMAT', '{instrument}.{codec}')
 QUEUE_NAME = os.getenv('QUEUE_NAME')
-POLLING_INTERVAL = int(os.getenv('POLLING_INTERVAL', 5))
+POLLING_INTERVAL = int(os.getenv('POLLING_INTERVAL', 10))
 OUTPUT_BUCKET_NAME = os.getenv('OUTPUT_BUCKET_NAME')
 OUTPUT_BUCKET_REGION= os.getenv('OUTPUT_BUCKET_REGION', 'eu-west-1')
 TRACKS_TABLE_NAME = os.getenv('TRACKS_TABLE_NAME')
@@ -103,7 +103,8 @@ def poll_for_sqs_message(queue_name: str):
         finally:
             sqs.delete_message(QueueUrl=queue_url, ReceiptHandle=message['ReceiptHandle'])
 
-        Timer(5, poll_for_sqs_message, args=[queue_name]).start()
+    # Schedule the next poll operation
+    Timer(POLLING_INTERVAL, poll_for_sqs_message, args=[queue_name]).start()
 
 
 if __name__ == '__main__':

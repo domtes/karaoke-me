@@ -10,8 +10,6 @@ import aws_cdk.aws_ecs_patterns as ecs_patterns
 import aws_cdk.aws_s3 as s3
 import aws_cdk.aws_sqs as sqs
 
-from karaokeme_cdk.karaokeme_cdk_stack import KaraokemeCdkStack
-
 
 class BaseResources(core.Stack):
     def __init__(self, *args, **kwargs):
