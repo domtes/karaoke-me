@@ -80,9 +80,9 @@ def list_jobs(ctx: click.core.Context):
 
 @cli.command('remove-vocals')
 @click.option('--file', type=click.File(mode='rb'), required=True)
-@click.option('--output-path', '-o', type=click.Path(writable=True))
+@click.option('--output', '-o', type=click.Path(writable=True), required=True)
 @click.pass_context
-def remove_vocals(ctx: click.core.Context, file: click.File, output_path: click.Path):
+def remove_vocals(ctx: click.core.Context, file: click.File, output: click.Path):
     '''Removes the vocal part from an audio/video file'''
     response = api_post(ctx, '/jobs')
     job = response.json()
@@ -116,11 +116,11 @@ def remove_vocals(ctx: click.core.Context, file: click.File, output_path: click.
     print(f"File processed in {processing_time}s")
 
     response = requests.get(job['output_url'], stream=True)
-    with open(output_path, 'wb') as f:
+    with open(output, 'wb') as f:
         for chunk in response.raw:
             f.write(chunk)
 
-    print(f"Saved file to: {output_path}")
+    print(f"Saved file to: {output}")
 
 
 if __name__ == '__main__':
